@@ -10,18 +10,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MrMadClown/quilljs-table.git"
+    "url": "git+https://github.com/sawasawasawa/quill-table.git"
   },
   "keywords": [
     "Quill",
     "Table"
   ],
-  "author": "MrMadClown",
+  "author": "sawasawasawa",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MrMadClown/quilljs-table/issues"
+    "url": "https://github.com/sawasawasawa/quill-table/issues"
   },
-  "homepage": "https://github.com/MrMadClown/quilljs-table#readme",
+  "homepage": "https://github.com/sawasawasawa/quill-table#readme",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
@@ -33,10 +33,9 @@
     "quill-delta": "^3.6.2",
     "style-loader": "^0.19.0",
     "uglifyjs-webpack-plugin": "^0.4.3",
-    "webpack": "^3.8.1"
-  },
-  "dependencies": {
+    "webpack": "^3.8.1",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-runtime": "^6.26.0"
-  }
+  },
+  "dependencies": {}
 }

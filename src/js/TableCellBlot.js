@@ -15,6 +15,7 @@ class TableCell extends ContainBlot {
         node.setAttribute('table_id', ids[0]);
         node.setAttribute('row_id', ids[1]);
         node.setAttribute('cell_id', ids[2]);
+        node.setAttribute('column', ids[3]);
         return node;
     }
 
@@ -28,7 +29,8 @@ class TableCell extends ContainBlot {
             [this.statics.blotName]:
             this.domNode.getAttribute('table_id') + '|' +
             this.domNode.getAttribute('row_id') + '|' +
-            this.domNode.getAttribute('cell_id')
+            this.domNode.getAttribute('cell_id') + '|' +
+            this.domNode.getAttribute('column')
         }
     }
 

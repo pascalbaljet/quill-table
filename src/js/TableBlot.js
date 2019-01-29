@@ -11,6 +11,7 @@ class Table extends ContainBlot {
         let tagName = 'table';
         let node = super.create(tagName);
         node.setAttribute('table_id', value);
+        node.setAttribute('id', value);
 
         return node;
     }

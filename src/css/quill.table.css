@@ -284,3 +284,19 @@ button.ql-table[value="append-col"]::after {
 .ql-picker-item[data-value=newtable_10_5]:before {
     content: "10x5";
 }
+
+button.ql-table[value="delete-row"]::before {
+    content: 'Delete row';
+}
+
+button.ql-table[value="delete-col"]::before {
+    content: 'Delete col';
+}
+
+button.ql-table[value="color-cell"]::before {
+    content: 'Color cell';
+}
+
+.table-bg-black {
+    background-color: black
+}

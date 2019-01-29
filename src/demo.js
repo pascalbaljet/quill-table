@@ -20,8 +20,10 @@ for (let r = 1; r <= maxRows; r++) {
     }
 }
 
+const tableToolbar = [{table: tableOptions}, {table: 'append-row'}, {table: 'delete-row'}, {table: 'append-col'}, {table: 'delete-col'}, {table: 'color-cell'}]
+
 const defaultToolbar = [
-    [{table: tableOptions}, {table: 'append-row'}, {table: 'append-col'}],
+    [...tableToolbar],
     ['bold', 'italic', 'underline', 'strike'],
     ['blockquote', 'code-block', 'image'],
 

@@ -32,7 +32,7 @@ export default class TableTrick {
                 table.appendChild(tr);
                 for (var ci = 0; ci < col_count; ci++) {
                     let cell_id = TableTrick.random_id();
-                    value = table_id + '|' + row_id + '|' + cell_id;
+                    const value = table_id + '|' + row_id + '|' + cell_id + '|' + (ci+1);
                     let td = Parchment.create('td', value);
                     tr.appendChild(td);
                     let p = Parchment.create('block');
@@ -72,9 +72,10 @@ export default class TableTrick {
                 let table_id = table.domNode.getAttribute('table_id');
                 let row_id = TableTrick.random_id();
                 new_row.domNode.setAttribute('row_id', row_id);
-                for (let i = col_count - 1; i >= 0; i--) {
+                for (let i = 1 ; i <= col_count; i++) {
                     let cell_id = TableTrick.random_id();
-                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id);
+                    const tdValue = table_id + '|' + row_id + '|' + cell_id + '|' + i
+                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + i);
                     new_row.appendChild(td);
                     let p = Parchment.create('block');
                     td.appendChild(p);
@@ -84,6 +85,18 @@ export default class TableTrick {
                 table.appendChild(new_row);
                 console.log(new_row);
             }
+        } else if (value === 'delete-col') {
+          const cell = getCell(quill)
+          const columnNumber = cell.parent.domNode.getAttribute('column')
+          const tableId = cell.parent.domNode.getAttribute('table_id')
+          const colCells = document.querySelectorAll(`#${tableId} [column='${columnNumber}']`)
+          colCells.forEach(td => td.remove())
+        } else if (value === 'delete-row') {
+          const cell = getCell(quill)
+          cell.parent.parent.domNode.remove()
+        } else if (value === 'color-cell') {
+          const cell = getCell(quill)
+          cell.parent.domNode.classList.add('table-bg-black')
         } else {
             let table_id = TableTrick.random_id();
             let table = Parchment.create('table', table_id);
@@ -99,4 +112,11 @@ export default class TableTrick {
             return table;
         }
     }
+}
+
+function getCell(quill) {
+  const range = quill.getSelection()
+  if (range == null) return null;
+  const [cell, offset] = quill.getLine(range.index);
+  return cell;
 }
