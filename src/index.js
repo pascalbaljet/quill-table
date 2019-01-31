@@ -20,6 +20,15 @@ class TableModule {
         toolbar.addHandler('table', function (value) {
             return TableTrick.table_handler(value, quill);
         });
+
+        toolbar.addHandler('table-border', function (value) {
+            return TableTrick.table_handler(value, quill);
+        });
+
+        toolbar.addHandler('table-color', function (value) {
+            return TableTrick.table_handler(value, quill);
+        });
+
         let clipboard = quill.getModule('clipboard');
         clipboard.addMatcher('TABLE', function (node, delta) {
             return delta;
