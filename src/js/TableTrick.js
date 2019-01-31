@@ -58,8 +58,9 @@ export default class TableTrick {
                 let table_id = table.domNode.getAttribute('table_id');
                 table.children.forEach(function (tr) {
                     let row_id = tr.domNode.getAttribute('row_id');
+                    let col = tr.domNode.childNodes.length
                     let cell_id = TableTrick.random_id();
-                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id);
+                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' +col);
                     tr.appendChild(td);
                 });
             }
