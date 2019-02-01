@@ -30,6 +30,13 @@ export default class TableTrick {
       }
     }
 
+    static getCell(quill) {
+    const range = quill.getSelection()
+    if (range == null) return null;
+    const [cell, offset] = quill.getLine(range.index);
+    return cell;
+  }
+
     static table_handler(value, quill) {
         if (value.includes('newtable_')) {
             let node = null;
@@ -37,7 +44,7 @@ export default class TableTrick {
             let row_count = Number.parseInt(sizes[1]);
             let col_count = Number.parseInt(sizes[2]);
             let table_id = TableTrick.random_id();
-            let table = Parchment.create('table', table_id);
+            let table = Parchment.create('table', table_id)
             for (var ri = 0; ri < row_count; ri++) {
                 let row_id = TableTrick.random_id();
                 let tr = Parchment.create('tr', row_id);
@@ -95,17 +102,16 @@ export default class TableTrick {
                     p.appendChild(br);
                 }
                 table.appendChild(new_row);
-                console.log(new_row);
             }
         } else if (value === 'delete-col') {
-          const cell = getCell(quill)
+          const cell = this.getCell(quill)
           const columnNumber = cell.parent.domNode.getAttribute('column')
           const tableId = cell.parent.domNode.getAttribute('table_id')
           const columnSelector = `td[table_id='${tableId}'][column='${columnNumber}']`
           const colCells = document.querySelectorAll(columnSelector)
           colCells.forEach(td => td.remove())
         } else if (value === 'delete-row') {
-          const cell = getCell(quill)
+          const cell = this.getCell(quill)
           cell.parent.parent.domNode.remove()
         } else if (value === 'border-none') {
           let table = TableTrick.getContainingTable(quill)
@@ -142,12 +148,5 @@ export default class TableTrick {
             return table;
         }
     }
-}
-
-function getCell(quill) {
-  const range = quill.getSelection()
-  if (range == null) return null;
-  const [cell, offset] = quill.getLine(range.index);
-  return cell;
 }
 

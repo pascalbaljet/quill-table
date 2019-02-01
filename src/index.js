@@ -6,6 +6,8 @@ import Table from './js/TableBlot';
 import Contain from './js/ContainBlot';
 import './css/quill.table.css';
 import TableTrick from "./js/TableTrick";
+import './css/quill.table.css';
+import tableToolbar from "./js/tableToolbar";
 
 let Container = Quill.import('blots/container');
 
@@ -13,6 +15,11 @@ Container.order = [
     'list', 'contain',   // Must be lower
     'td', 'tr', 'table'  // Must be higher
 ];
+
+Quill.register(TableCell);
+Quill.register(TableRow);
+Quill.register(Table);
+Quill.register(Contain);
 
 class TableModule {
     constructor(quill, options) {
@@ -49,5 +56,6 @@ module.exports = {
     TableRow,
     TableCell,
     Contain,
-    TableModule
+    TableModule,
+    tableToolbar
 };
