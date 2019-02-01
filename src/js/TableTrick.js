@@ -1,4 +1,5 @@
 import Quill from 'quill';
+import TableCell from "./TableCellBlot";
 
 let Parchment = Quill.import('parchment');
 let Container = Quill.import('blots/container');
@@ -131,8 +132,13 @@ export default class TableTrick {
            this.resetGridBorders(table)
           }
         } else if (value.startsWith('#')) {
-          let td = TableTrick.find_td(quill);
-          td.domNode.style.backgroundColor = value
+          const { index, length } = quill.getSelection()
+          for (let i=0; i < length; i++) {
+            const td = quill.getLeaf(index + i)[0].parent.parent
+            if (td instanceof TableCell) {
+              td.domNode.style.backgroundColor = value
+            }
+          }
         } else {
             let table_id = TableTrick.random_id();
             let table = Parchment.create('table', table_id);
