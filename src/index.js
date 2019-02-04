@@ -45,7 +45,7 @@ class TableModule {
         });
         clipboard.addMatcher('TD', function (node, delta) {
             return delta.compose(new Delta().retain(delta.length(), {
-                td: node.getAttribute('table_id') + '|' + node.getAttribute('row_id') + '|' + node.getAttribute('cell_id')
+                td: node.getAttribute('table_id') + '|' + node.getAttribute('row_id') + '|' + node.getAttribute('cell_id') + '|' + node.getAttribute('column') + '|' + node.getAttribute('color')
             }));
         });
     }

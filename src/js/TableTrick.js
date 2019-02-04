@@ -52,7 +52,7 @@ export default class TableTrick {
                 table.appendChild(tr);
                 for (var ci = 0; ci < col_count; ci++) {
                     let cell_id = TableTrick.random_id();
-                    const value = table_id + '|' + row_id + '|' + cell_id + '|' + (ci+1);
+                    const value = table_id + '|' + row_id + '|' + cell_id + '|' + (ci+1) + '|' + 'white';
                     let td = Parchment.create('td', value);
                     tr.appendChild(td);
                     let p = Parchment.create('block');
@@ -80,7 +80,7 @@ export default class TableTrick {
                     let row_id = tr.domNode.getAttribute('row_id');
                     let col = tr.domNode.childNodes.length
                     let cell_id = TableTrick.random_id();
-                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' +col);
+                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + col + '|' + 'white');
                     tr.appendChild(td);
                 });
             }
@@ -95,7 +95,7 @@ export default class TableTrick {
                 new_row.domNode.setAttribute('row_id', row_id);
                 for (let i = 1 ; i <= col_count; i++) {
                     let cell_id = TableTrick.random_id();
-                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + i);
+                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + i  + '|' + 'white');
                     new_row.appendChild(td);
                     let p = Parchment.create('block');
                     td.appendChild(p);
@@ -132,6 +132,7 @@ export default class TableTrick {
            this.resetGridBorders(table)
           }
         } else if (value.startsWith('#')) {
+          const currentElement = TableTrick.find_td(quill)
           const { index, length } = quill.getSelection()
           for (let i=0; i < length; i++) {
             const td = quill.getLeaf(index + i)[0].parent.parent
@@ -139,6 +140,7 @@ export default class TableTrick {
               td.domNode.style.backgroundColor = value
             }
           }
+          currentElement.domNode.style.backgroundColor = value
         } else {
             let table_id = TableTrick.random_id();
             let table = Parchment.create('table', table_id);

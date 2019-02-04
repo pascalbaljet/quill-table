@@ -12303,7 +12303,7 @@ var TableCell = function (_ContainBlot) {
         key: 'formats',
         value: function formats() {
             // We don't inherit from FormatBlot
-            return (0, _defineProperty3.default)({}, this.statics.blotName, this.domNode.getAttribute('table_id') + '|' + this.domNode.getAttribute('row_id') + '|' + this.domNode.getAttribute('cell_id') + '|' + this.domNode.getAttribute('column'));
+            return (0, _defineProperty3.default)({}, this.statics.blotName, this.domNode.getAttribute('table_id') + '|' + this.domNode.getAttribute('row_id') + '|' + this.domNode.getAttribute('cell_id') + '|' + this.domNode.getAttribute('column') + '|' + this.domNode.getAttribute('color'));
         }
     }, {
         key: 'optimize',
@@ -12375,6 +12375,7 @@ var TableCell = function (_ContainBlot) {
             node.setAttribute('row_id', ids[1]);
             node.setAttribute('cell_id', ids[2]);
             node.setAttribute('column', ids[3]);
+            node.setAttribute('color', ids[4]);
             return node;
         }
     }]);
@@ -12569,7 +12570,7 @@ var TableTrick = function () {
                     table.appendChild(tr);
                     for (var ci = 0; ci < col_count; ci++) {
                         var cell_id = TableTrick.random_id();
-                        var _value = table_id + '|' + row_id + '|' + cell_id + '|' + (ci + 1);
+                        var _value = table_id + '|' + row_id + '|' + cell_id + '|' + (ci + 1) + '|' + 'white';
                         var td = Parchment.create('td', _value);
                         tr.appendChild(td);
                         var p = Parchment.create('block');
@@ -12597,7 +12598,7 @@ var TableTrick = function () {
                         var row_id = tr.domNode.getAttribute('row_id');
                         var col = tr.domNode.childNodes.length;
                         var cell_id = TableTrick.random_id();
-                        var td = Parchment.create('td', _table_id + '|' + row_id + '|' + cell_id + '|' + col);
+                        var td = Parchment.create('td', _table_id + '|' + row_id + '|' + cell_id + '|' + col + '|' + 'white');
                         tr.appendChild(td);
                     });
                 }
@@ -12612,7 +12613,7 @@ var TableTrick = function () {
                     new_row.domNode.setAttribute('row_id', _row_id);
                     for (var i = 1; i <= _col_count; i++) {
                         var _cell_id = TableTrick.random_id();
-                        var _td3 = Parchment.create('td', _table_id2 + '|' + _row_id + '|' + _cell_id + '|' + i);
+                        var _td3 = Parchment.create('td', _table_id2 + '|' + _row_id + '|' + _cell_id + '|' + i + '|' + 'white');
                         new_row.appendChild(_td3);
                         var _p = Parchment.create('block');
                         _td3.appendChild(_p);
@@ -12651,6 +12652,8 @@ var TableTrick = function () {
                     this.resetGridBorders(_table5);
                 }
             } else if (value.startsWith('#')) {
+                var currentElement = TableTrick.find_td(quill);
+
                 var _quill$getSelection = quill.getSelection(),
                     index = _quill$getSelection.index,
                     length = _quill$getSelection.length;
@@ -12661,6 +12664,7 @@ var TableTrick = function () {
                         _td4.domNode.style.backgroundColor = value;
                     }
                 }
+                currentElement.domNode.style.backgroundColor = value;
             } else {
                 var _table_id3 = TableTrick.random_id();
                 var _table6 = Parchment.create('table', _table_id3);
@@ -15978,7 +15982,7 @@ var TableModule = function TableModule(quill, options) {
     });
     clipboard.addMatcher('TD', function (node, delta) {
         return delta.compose(new _quillDelta2.default().retain(delta.length(), {
-            td: node.getAttribute('table_id') + '|' + node.getAttribute('row_id') + '|' + node.getAttribute('cell_id')
+            td: node.getAttribute('table_id') + '|' + node.getAttribute('row_id') + '|' + node.getAttribute('cell_id') + '|' + node.getAttribute('column') + '|' + node.getAttribute('color')
         }));
     });
 };
