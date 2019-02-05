@@ -321,7 +321,7 @@ span.ql-table-border [data-value="border-none"] {
 }
 
 span.ql-table-border [data-value="border-grid"] {
-background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAACB0lEQVRIib3WQUtVURAH8J8XEZGHKwkRd+GiVUQkhIjQRwiJVkFUuGjRwkWERMdFRLSoJKRFH8KiTUTEQ1pkfYgWUa5E4iUi8mhx53TPU4oEXwOPM+9//5w5M/8zc+9ASuklLuiPbQxiGsP4im48GMUYtrAdWIXJ8P/GrQKfxHT+8w2ncDJ+9wK/X2Cn8QWbOFvgS8F9iKnApoJrsEhnP6UE8lr6JXYA7xZY9rvZr/TPujCQUvqOIXU58glmcRGv8D6wYSyqs36EncDP4xJe410R4A5GcoDxPmXRyRpsYbnIYA7zWCtONYzbkcGDIoMZXFZn+7bYfAmtHKCD1ZTSPr/Fmsd6SulZYKNYiEAvUkpbge9GgA+ZG/hNtPopMhqR93EmVriuFnIJq4G10I4MZjQNeAVP1b2zUuz9ERO5ROP4VDxsxbqIG+FXmAi/rdErc2/harHHBPb+VKKjlK46sPZYzmAT5xwu0WNk4coSzTlcopXgZ+spURfbxS3KV3AnpbQdWDd4Xfwo8Mz9mbGC39dRgd5Rsawp0Zy6/dc0zZMbbUjdaJ3AZzWN9qbY+y5a/3VU9GXYlaNipRB5LwK0U0pPAhvFtQj0vBgVnQiwnrmBL2CkFPm4Ba9o+qBClVKqNGU6ssVbrqfxsshjju+lX3J3B7Gh/mwZO3CgjvpKniiw3Vj/lfv5F36FybA8roeQAAAAAElFTkSuQmCC');
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAACB0lEQVRIib3WQUtVURAH8J8XEZGHKwkRd+GiVUQkhIjQRwiJVkFUuGjRwkWERMdFRLSoJKRFH8KiTUTEQ1pkfYgWUa5E4iUi8mhx53TPU4oEXwOPM+9//5w5M/8zc+9ASuklLuiPbQxiGsP4im48GMUYtrAdWIXJ8P/GrQKfxHT+8w2ncDJ+9wK/X2Cn8QWbOFvgS8F9iKnApoJrsEhnP6UE8lr6JXYA7xZY9rvZr/TPujCQUvqOIXU58glmcRGv8D6wYSyqs36EncDP4xJe410R4A5GcoDxPmXRyRpsYbnIYA7zWCtONYzbkcGDIoMZXFZn+7bYfAmtHKCD1ZTSPr/Fmsd6SulZYKNYiEAvUkpbge9GgA+ZG/hNtPopMhqR93EmVriuFnIJq4G10I4MZjQNeAVP1b2zUuz9ERO5ROP4VDxsxbqIG+FXmAi/rdErc2/harHHBPb+VKKjlK46sPZYzmAT5xwu0WNk4coSzTlcopXgZ+spURfbxS3KV3AnpbQdWDd4Xfwo8Mz9mbGC39dRgd5Rsawp0Zy6/dc0zZMbbUjdaJ3AZzWN9qbY+y5a/3VU9GXYlaNipRB5LwK0U0pPAhvFtQj0vBgVnQiwnrmBL2CkFPm4Ba9o+qBClVKqNGU6ssVbrqfxsshjju+lX3J3B7Gh/mwZO3CgjvpKniiw3Vj/lfv5F36FybA8roeQAAAAAElFTkSuQmCC');
 }
 
 .ql-table-border .ql-picker-label svg {
@@ -337,9 +337,6 @@ background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAY
     background-size: 16px 16px;
     background-position: 0px 2px;
     background-repeat: no-repeat;
-}
-
-.ql-table-border .ql-picker-label {
 }
 
 table.table-border-none td {
@@ -363,7 +360,8 @@ span.ql-table-border span.ql-picker-item {
 
 .ql-table-color.ql-picker {
     width: 25px;
-    margin-right: 5px;
+    margin-right: 20px;
+    padding: 3px 6px 3px 0
 }
 
 .ql-table-color .ql-picker-item {
@@ -373,8 +371,11 @@ span.ql-table-border span.ql-picker-item {
 }
 
 .ql-table-color .ql-picker-label {
-    margin-right: 20px;
     background-color: yellow;
+}
+
+.ql-table-color .ql-picker-label svg {
+    left: 17px
 }
 
 span.ql-table-color .ql-picker-options {
