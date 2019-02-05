@@ -138,6 +138,7 @@ export default class TableTrick {
             const td = quill.getLeaf(index + i)[0].parent.parent
             if (td instanceof TableCell) {
               td.domNode.style.backgroundColor = value
+              td.domNode.setAttribute('color', value)
             }
           }
           currentElement.domNode.style.backgroundColor = value
