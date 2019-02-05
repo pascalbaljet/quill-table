@@ -16,6 +16,11 @@ class TableCell extends ContainBlot {
         node.setAttribute('row_id', ids[1]);
         node.setAttribute('cell_id', ids[2]);
         node.setAttribute('column', ids[3]);
+        if (ids[4]) {
+          node.setAttribute('color', ids[4]);
+          node.setAttribute('style', `background-color: ${ids[4]}`);
+          node.style.backgroundColor = value
+        }
         return node;
     }
 
@@ -30,7 +35,8 @@ class TableCell extends ContainBlot {
             this.domNode.getAttribute('table_id') + '|' +
             this.domNode.getAttribute('row_id') + '|' +
             this.domNode.getAttribute('cell_id') + '|' +
-            this.domNode.getAttribute('column')
+            this.domNode.getAttribute('column') + '|' +
+            this.domNode.getAttribute('color')
         }
     }
 

@@ -1,3 +1,5 @@
+import tableToolbar from "./js/tableToolbar";
+
 window.Quill = require('quill');
 const quillTable = require('./index.js');
 
@@ -9,21 +11,9 @@ Quill.register('modules/table', quillTable.TableModule);
 
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
-import './css/quill.table.css';
-
-const maxRows = 10;
-const maxCols = 5;
-const tableOptions = [];
-for (let r = 1; r <= maxRows; r++) {
-    for (let c = 1; c <= maxCols; c++) {
-        tableOptions.push('newtable_' + r + '_' + c);
-    }
-}
-
-const tableToolbar = [{table: tableOptions}, {table: 'append-row'}, {table: 'delete-row'}, {table: 'append-col'}, {table: 'delete-col'}, {table: 'color-cell'}]
 
 const defaultToolbar = [
-    [...tableToolbar],
+    [...quillTable.tableToolbar],
     ['bold', 'italic', 'underline', 'strike'],
     ['blockquote', 'code-block', 'image'],
 
@@ -40,8 +30,14 @@ const defaultToolbar = [
 ];
 const Editor = new Quill(document.getElementById('quillContainer'), {
         modules: {
-            toolbar: defaultToolbar,
-            table: true
+            toolbar: {
+              container: defaultToolbar,
+              handlers: {
+                'table-border': () => {}, //This seems to be needed to be overwritten by modules table-border handler
+                'table-color': () => {} //This seems to be needed to be overwritten by modules table-border handler
+              }
+            },
+            table: true,
         },
         placeholder: '',
         theme: 'snow',
