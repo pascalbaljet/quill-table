@@ -72,7 +72,9 @@ export default class TableTrick {
                 table.appendChild(tr);
                 for (var ci = 0; ci < col_count; ci++) {
                     let cell_id = TableTrick.random_id();
-                    const value = table_id + '|' + row_id + '|' + cell_id + '|' + (ci+1) + '|' + 'white';
+                    const colspan = 1
+                    const color = 'white'
+                    const value = table_id + '|' + row_id + '|' + cell_id + '|' + (ci+1) + '|' + color + '|' + colspan;
                     let td = Parchment.create('td', value);
                     tr.appendChild(td);
                     let p = Parchment.create('block');
@@ -92,20 +94,24 @@ export default class TableTrick {
             blot.insertBefore(table, top_branch);
             return node;
         } else if (value === 'append-col') {
-            let td = TableTrick.getSelectedTd(quill);
-            if (td) {
+          let td = TableTrick.getSelectedTd(quill);
+          const { index, length } = quill.getSelection()
+
+          if (td) {
                 const number = TableTrick.getCell(quill).domNode.getAttribute('column')
                 let table = td.parent.parent;
                 let table_id = table.domNode.getAttribute('table_id');
                 table.children.forEach(function (tr) {
                   let row_id = tr.domNode.getAttribute('row_id');
                   let cell_id = TableTrick.random_id();
-                  let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + number + 1 + '|white');
+                  let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id +  '|' + number + 1 + '|white|' + 1);
                   const cells = tr.domNode.querySelectorAll('td')
-                  tr.domNode.insertBefore(td.domNode, cells[number]);
+                  tr.insertBefore(td, tr.children[number]);
                 });
             }
           TableTrick.updateColumnNumbers(quill)
+          quill.setSelection(index, length)
+
         } else if (value === 'append-row') {
             let td = TableTrick.getSelectedTd(quill);
             if (td) {
@@ -143,6 +149,36 @@ export default class TableTrick {
             this.resetGridBorders(table)
             table.domNode.classList.add('table-border-none')
           }
+        } else if (value === 'merge') {
+
+
+          const { index, length } = quill.getSelection()
+          let firstElement = quill.getLeaf(index)[0].parent.parent.domNode;
+          const firstElementId = firstElement.getAttribute('cell_id')
+          const firstCellRow = firstElement.getAttribute('row_id')
+          const cellsToRemoveMap = {}
+          for (let i=0; i < length+1; i++) {
+            const td = quill.getLeaf(index + i)[0].parent.parent;
+            if (td instanceof TableCell) {
+              const cellId = td.domNode.getAttribute('cell_id')
+              const cellRow = td.domNode.getAttribute('row_id')
+              if (cellId !== firstElementId && cellRow === firstCellRow) {
+                cellsToRemoveMap[cellId] = td.domNode
+              }
+            }
+          }
+          const cellsToRemove = Object.values(cellsToRemoveMap)
+          const colspans = [firstElement, ...cellsToRemove].map(td=>{
+            return document.body.contains(td) ? parseInt((td.getAttribute('colspan'))) : 0
+          })
+          const totalColspan = colspans.reduce((a,b)=>a+b)
+          const colspan = cellsToRemove.length + parseInt(firstElement.getAttribute('colspan'))
+          firstElement.setAttribute('colspan', `${totalColspan}`)
+          cellsToRemove.forEach(cell => cell.remove())
+
+          TableTrick.updateColumnNumbers(quill)
+          quill.setSelection(index, length)
+
         } else if (value === 'border-outline') {
           let table = TableTrick.findTable(quill)
           if (table) {
