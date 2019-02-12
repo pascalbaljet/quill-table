@@ -105,8 +105,7 @@ export default class TableTrick {
                   let row_id = tr.domNode.getAttribute('row_id');
                   let cell_id = TableTrick.random_id();
                   let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id +  '|' + number + 1 + '|white|' + 1);
-                  const cells = tr.domNode.querySelectorAll('td')
-                  tr.insertBefore(td, tr.children[number]);
+                  tr.insertBefore(td, tr.children.find(number)[0]);
                 });
             }
           TableTrick.updateColumnNumbers(quill)
