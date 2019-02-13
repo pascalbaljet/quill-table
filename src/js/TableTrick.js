@@ -123,22 +123,28 @@ export default class TableTrick {
         } else if (value === 'append-row') {
             let td = TableTrick.getSelectedTd(quill);
             if (td) {
-                let col_count = td.parent.children.length;
-                let table = td.parent.parent;
-                let new_row = td.parent.clone();
-                let table_id = table.domNode.getAttribute('table_id');
-                let row_id = TableTrick.random_id();
-                new_row.domNode.setAttribute('row_id', row_id);
-                for (let i = 1 ; i <= col_count; i++) {
+                const currentRow = td.parent
+                const table = td.parent.parent;
+                const newRow = Parchment.create('tr');
+                const nextRow = td.parent.next
+                const table_id = table.domNode.getAttribute('table_id');
+                const row_id = TableTrick.random_id();
+                newRow.domNode.setAttribute('row_id', row_id);
+                currentRow.children.forEach((cell, i)=>{
                     let cell_id = TableTrick.random_id();
-                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + i  + '|' + 'white');
-                    new_row.appendChild(td);
+                    const colspan = cell.domNode.getAttribute('colspan')
+                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + i  + '|white|' + colspan);
+                    newRow.appendChild(td);
                     let p = Parchment.create('block');
                     td.appendChild(p);
                     let br = Parchment.create('break');
                     p.appendChild(br);
+                })
+                if (nextRow) {
+                  table.insertBefore(newRow, nextRow)
+                } else {
+                  table.appendChild(newRow);
                 }
-                table.appendChild(new_row);
             }
         } else if (value === 'delete-col') {
           const cell = this.getCell(quill)
@@ -146,7 +152,18 @@ export default class TableTrick {
           const tableId = cell.domNode.getAttribute('table_id')
           const columnSelector = `td[table_id='${tableId}'][column='${columnNumber}']`
           const colCells = document.querySelectorAll(columnSelector)
-          colCells.forEach(td => td.remove())
+          colCells.forEach(td => {
+            // This handles reducing colspan of a merged cell only if delete
+            // was fired on a cell STARTING at the same column as the merged cell
+            // TODO it should also reduce colspan, when delete is fired on other cells
+            // that are located under the merged one.
+            const colspan = td.getAttribute('colspan')
+            if (colspan>1) {
+              td.setAttribute('colspan', colspan - 1)
+            } else {
+              td.remove()
+            }
+          })
           TableTrick.updateColumnNumbers(quill)
         } else if (value === 'delete-row') {
           const cell = this.getCell(quill)
@@ -174,13 +191,11 @@ export default class TableTrick {
             }
           }
           const cellsToRemove = Object.values(cellsToRemoveMap)
-          let contentHtml = ''
           const totalColspan = [firstElement, ...cellsToRemove].map(td=>{
             return document.body.contains(td.domNode) ? parseInt((td.domNode.getAttribute('colspan'))) : 0
           }).reduce((a,b)=>a+b)
           firstElement.domNode.setAttribute('colspan', `${totalColspan}`)
           cellsToRemove.forEach(cell => cell.remove())
-
           TableTrick.updateColumnNumbers(quill)
           quill.setSelection(index, length)
         } else if (value === 'border-outline') {

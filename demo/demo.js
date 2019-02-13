@@ -12640,14 +12640,25 @@ var TableTrick = function () {
             length = _quill$getSelection.length;
 
         if (_td) {
-          var number = TableTrick.getCell(quill).domNode.getAttribute('column');
+          var columnNumber = parseInt(TableTrick.getCell(quill).domNode.getAttribute('column'));
           var _table = _td.parent.parent;
           var _table_id = _table.domNode.getAttribute('table_id');
           _table.children.forEach(function (tr) {
             var row_id = tr.domNode.getAttribute('row_id');
             var cell_id = TableTrick.random_id();
-            var td = Parchment.create('td', _table_id + '|' + row_id + '|' + cell_id + '|' + number + 1 + '|white|' + 1);
-            tr.insertBefore(td, tr.children.find(number)[0]);
+            var td = Parchment.create('td', _table_id + '|' + row_id + '|' + cell_id + '|' + columnNumber + '|white|1');
+            var nextColumnBlot = tr.children.map(function (c) {
+              if (parseInt(c.domNode.getAttribute('column')) === columnNumber + 1) {
+                return c;
+              }
+            }).filter(function (c) {
+              return !!c;
+            })[0];
+            if (nextColumnBlot) {
+              tr.insertBefore(td, nextColumnBlot);
+            } else {
+              tr.appendChild(td);
+            }
           });
         }
         TableTrick.updateColumnNumbers(quill);
@@ -12655,31 +12666,46 @@ var TableTrick = function () {
       } else if (value === 'append-row') {
         var _td2 = TableTrick.getSelectedTd(quill);
         if (_td2) {
-          var _col_count = _td2.parent.children.length;
+          var currentRow = _td2.parent;
           var _table2 = _td2.parent.parent;
-          var new_row = _td2.parent.clone();
+          var newRow = Parchment.create('tr');
+          var nextRow = _td2.parent.next;
           var _table_id2 = _table2.domNode.getAttribute('table_id');
           var _row_id = TableTrick.random_id();
-          new_row.domNode.setAttribute('row_id', _row_id);
-          for (var i = 1; i <= _col_count; i++) {
-            var _cell_id = TableTrick.random_id();
-            var _td3 = Parchment.create('td', _table_id2 + '|' + _row_id + '|' + _cell_id + '|' + i + '|' + 'white');
-            new_row.appendChild(_td3);
-            var _p = Parchment.create('block');
-            _td3.appendChild(_p);
-            var _br = Parchment.create('break');
-            _p.appendChild(_br);
+          newRow.domNode.setAttribute('row_id', _row_id);
+          currentRow.children.forEach(function (cell, i) {
+            var cell_id = TableTrick.random_id();
+            var colspan = cell.domNode.getAttribute('colspan');
+            var td = Parchment.create('td', _table_id2 + '|' + _row_id + '|' + cell_id + '|' + i + '|white|' + colspan);
+            newRow.appendChild(td);
+            var p = Parchment.create('block');
+            td.appendChild(p);
+            var br = Parchment.create('break');
+            p.appendChild(br);
+          });
+          if (nextRow) {
+            _table2.insertBefore(newRow, nextRow);
+          } else {
+            _table2.appendChild(newRow);
           }
-          _table2.appendChild(new_row);
         }
       } else if (value === 'delete-col') {
         var cell = this.getCell(quill);
-        var columnNumber = cell.domNode.getAttribute('column');
+        var _columnNumber = cell.domNode.getAttribute('column');
         var tableId = cell.domNode.getAttribute('table_id');
-        var columnSelector = 'td[table_id=\'' + tableId + '\'][column=\'' + columnNumber + '\']';
+        var columnSelector = 'td[table_id=\'' + tableId + '\'][column=\'' + _columnNumber + '\']';
         var colCells = document.querySelectorAll(columnSelector);
         colCells.forEach(function (td) {
-          return td.remove();
+          // This handles reducing colspan of a merged cell only if delete
+          // was fired on a cell STARTING at the same column as the merged cell
+          // TODO it should also reduce colspan, when delete is fired on other cells
+          // that are located under the merged one.
+          var colspan = td.getAttribute('colspan');
+          if (colspan > 1) {
+            td.setAttribute('colspan', colspan - 1);
+          } else {
+            td.remove();
+          }
         });
         TableTrick.updateColumnNumbers(quill);
       } else if (value === 'delete-row') {
@@ -12696,33 +12722,30 @@ var TableTrick = function () {
             _index = _quill$getSelection2.index,
             _length = _quill$getSelection2.length;
 
-        var firstElement = quill.getLeaf(_index)[0].parent.parent.domNode;
-        var firstElementId = firstElement.getAttribute('cell_id');
-        var firstCellRow = firstElement.getAttribute('row_id');
+        var firstElement = quill.getLeaf(_index)[0].parent.parent;
+        var firstElementId = firstElement.domNode.getAttribute('cell_id');
+        var firstCellRow = firstElement.domNode.getAttribute('row_id');
         var cellsToRemoveMap = {};
-        for (var _i = 0; _i < _length + 1; _i++) {
-          var _td4 = quill.getLeaf(_index + _i)[0].parent.parent;
-          if (_td4 instanceof _TableCellBlot2.default) {
-            var cellId = _td4.domNode.getAttribute('cell_id');
-            var cellRow = _td4.domNode.getAttribute('row_id');
+        for (var i = 0; i < _length + 1; i++) {
+          var _td3 = quill.getLeaf(_index + i)[0].parent.parent;
+          if (_td3 instanceof _TableCellBlot2.default) {
+            var cellId = _td3.domNode.getAttribute('cell_id');
+            var cellRow = _td3.domNode.getAttribute('row_id');
             if (cellId !== firstElementId && cellRow === firstCellRow) {
-              cellsToRemoveMap[cellId] = _td4.domNode;
+              cellsToRemoveMap[cellId] = _td3;
             }
           }
         }
         var cellsToRemove = (0, _values2.default)(cellsToRemoveMap);
-        var colspans = [firstElement].concat((0, _toConsumableArray3.default)(cellsToRemove)).map(function (td) {
-          return document.body.contains(td) ? parseInt(td.getAttribute('colspan')) : 0;
-        });
-        var totalColspan = colspans.reduce(function (a, b) {
+        var totalColspan = [firstElement].concat((0, _toConsumableArray3.default)(cellsToRemove)).map(function (td) {
+          return document.body.contains(td.domNode) ? parseInt(td.domNode.getAttribute('colspan')) : 0;
+        }).reduce(function (a, b) {
           return a + b;
         });
-        var _colspan = cellsToRemove.length + parseInt(firstElement.getAttribute('colspan'));
-        firstElement.setAttribute('colspan', '' + totalColspan);
+        firstElement.domNode.setAttribute('colspan', '' + totalColspan);
         cellsToRemove.forEach(function (cell) {
           return cell.remove();
         });
-
         TableTrick.updateColumnNumbers(quill);
         quill.setSelection(_index, _length);
       } else if (value === 'border-outline') {
@@ -12743,11 +12766,11 @@ var TableTrick = function () {
             _index2 = _quill$getSelection3.index,
             _length2 = _quill$getSelection3.length;
 
-        for (var _i2 = 0; _i2 < _length2; _i2++) {
-          var _td5 = quill.getLeaf(_index2 + _i2)[0].parent.parent;
-          if (_td5 instanceof _TableCellBlot2.default) {
-            _td5.domNode.style.backgroundColor = value;
-            _td5.domNode.setAttribute('color', value);
+        for (var _i = 0; _i < _length2; _i++) {
+          var _td4 = quill.getLeaf(_index2 + _i)[0].parent.parent;
+          if (_td4 instanceof _TableCellBlot2.default) {
+            _td4.domNode.style.backgroundColor = value;
+            _td4.domNode.setAttribute('color', value);
           }
         }
         currentElement.domNode.style.backgroundColor = value;
