@@ -98,14 +98,23 @@ export default class TableTrick {
           const { index, length } = quill.getSelection()
 
           if (td) {
-                const number = TableTrick.getCell(quill).domNode.getAttribute('column')
+                const columnNumber = parseInt(TableTrick.getCell(quill).domNode.getAttribute('column'))
                 let table = td.parent.parent;
                 let table_id = table.domNode.getAttribute('table_id');
                 table.children.forEach(function (tr) {
                   let row_id = tr.domNode.getAttribute('row_id');
                   let cell_id = TableTrick.random_id();
-                  let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id +  '|' + number + 1 + '|white|' + 1);
-                  tr.insertBefore(td, tr.children.find(number)[0]);
+                  let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id +  '|' + columnNumber + '|white|1');
+                  const nextColumnBlot = tr.children.map(c=> {
+                    if (parseInt(c.domNode.getAttribute('column')) === (columnNumber+1)) {
+                      return c
+                    }
+                  }).filter(c=>!!c)[0]
+                  if (nextColumnBlot) {
+                    tr.insertBefore(td, nextColumnBlot);
+                  } else {
+                    tr.appendChild(td);
+                  }
                 });
             }
           TableTrick.updateColumnNumbers(quill)
@@ -149,12 +158,10 @@ export default class TableTrick {
             table.domNode.classList.add('table-border-none')
           }
         } else if (value === 'merge') {
-
-
           const { index, length } = quill.getSelection()
-          let firstElement = quill.getLeaf(index)[0].parent.parent.domNode;
-          const firstElementId = firstElement.getAttribute('cell_id')
-          const firstCellRow = firstElement.getAttribute('row_id')
+          let firstElement = quill.getLeaf(index)[0].parent.parent;
+          const firstElementId = firstElement.domNode.getAttribute('cell_id')
+          const firstCellRow = firstElement.domNode.getAttribute('row_id')
           const cellsToRemoveMap = {}
           for (let i=0; i < length+1; i++) {
             const td = quill.getLeaf(index + i)[0].parent.parent;
@@ -162,22 +169,20 @@ export default class TableTrick {
               const cellId = td.domNode.getAttribute('cell_id')
               const cellRow = td.domNode.getAttribute('row_id')
               if (cellId !== firstElementId && cellRow === firstCellRow) {
-                cellsToRemoveMap[cellId] = td.domNode
+                cellsToRemoveMap[cellId] = td
               }
             }
           }
           const cellsToRemove = Object.values(cellsToRemoveMap)
-          const colspans = [firstElement, ...cellsToRemove].map(td=>{
-            return document.body.contains(td) ? parseInt((td.getAttribute('colspan'))) : 0
-          })
-          const totalColspan = colspans.reduce((a,b)=>a+b)
-          const colspan = cellsToRemove.length + parseInt(firstElement.getAttribute('colspan'))
-          firstElement.setAttribute('colspan', `${totalColspan}`)
+          let contentHtml = ''
+          const totalColspan = [firstElement, ...cellsToRemove].map(td=>{
+            return document.body.contains(td.domNode) ? parseInt((td.domNode.getAttribute('colspan'))) : 0
+          }).reduce((a,b)=>a+b)
+          firstElement.domNode.setAttribute('colspan', `${totalColspan}`)
           cellsToRemove.forEach(cell => cell.remove())
 
           TableTrick.updateColumnNumbers(quill)
           quill.setSelection(index, length)
-
         } else if (value === 'border-outline') {
           let table = TableTrick.findTable(quill)
           if (table) {
