@@ -24,10 +24,17 @@ module.exports = {
                     options: {
                         presets: ['es2015'],
                         plugins: [
+                            "transform-class-properties",
                             'transform-runtime',
                         ],
                     }
                 }
+            },
+            {
+                test: /\.svg$/,
+                use: [{
+                  loader: 'raw-loader'
+                }]
             }
         ]
     },
