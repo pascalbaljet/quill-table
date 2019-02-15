@@ -11918,6 +11918,7 @@ var TableTrick = function () {
           } else {
             _table2.appendChild(newRow);
           }
+          TableTrick.updateColumnNumbers(quill);
         }
       } else if (value === 'delete-col') {
         var cell = this.getCell(quill);

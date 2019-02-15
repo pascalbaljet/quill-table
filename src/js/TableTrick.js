@@ -145,6 +145,7 @@ export default class TableTrick {
                 } else {
                   table.appendChild(newRow);
                 }
+              TableTrick.updateColumnNumbers(quill)
             }
         } else if (value === 'delete-col') {
           const cell = this.getCell(quill)
@@ -152,6 +153,8 @@ export default class TableTrick {
           const tableId = cell.domNode.getAttribute('table_id')
           const columnSelector = `td[table_id='${tableId}'][column='${columnNumber}']`
           const colCells = document.querySelectorAll(columnSelector)
+          console.log("_______ colCells", colCells)
+          // debugger
           colCells.forEach(td => {
             // This handles reducing colspan of a merged cell only if delete
             // was fired on a cell STARTING at the same column as the merged cell
