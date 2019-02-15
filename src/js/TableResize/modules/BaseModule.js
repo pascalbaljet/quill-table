@@ -1,13 +1,13 @@
 export class BaseModule {
     constructor(resizer) {
         this.overlay = resizer.overlay;
-        this.img = resizer.img;
+        this.table = resizer.table;
         this.options = resizer.options;
         this.requestUpdate = resizer.onUpdate;
     }
     /*
         requestUpdate (passed in by the library during construction, above) can be used to let the library know that
-        you've changed something about the image that would require re-calculating the overlay (and all of its child
+        you've changed something about the table that would require re-calculating the overlay (and all of its child
         elements)
 
         For example, if you add a margin to the element, you'll want to call this or else all the controls will be

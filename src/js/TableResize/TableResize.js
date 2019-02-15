@@ -1,17 +1,16 @@
 import defaultsDeep from 'lodash/defaultsDeep';
 import DefaultOptions from './DefaultOptions';
-import { DisplaySize } from './modules/DisplaySize';
-import { Toolbar } from './modules/Toolbar';
 import { Resize } from './modules/Resize';
+import TableTrick from "../TableTrick";
+import {TableStyle} from "./TableAttributors";
 
-const knownModules = { DisplaySize, Toolbar, Resize };
+const knownModules = { Resize };
 
 /**
- * Custom module for quilljs to allow user to resize <img> elements
- * (Works on Chrome, Edge, Safari and replaces Firefox's native resize behavior)
- * @see https://quilljs.com/blog/building-a-custom-module/
+ * Custom module for quilljs to allow user to resize <table> elements
+ * Mostly borrowed from https://github.com/yanzongzhen/quill-image-resize-fix-module
  */
-export default class ImageResize {
+export default class TableResize {
 
     constructor(quill, options = {}) {
         // save the quill reference and options
@@ -31,9 +30,6 @@ export default class ImageResize {
         if (moduleClasses !== false) {
             this.options.modules = moduleClasses;
         }
-
-        // disable native image resizing on firefox
-        document.execCommand('enableObjectResizing', false, 'false');
 
         // respond to clicks inside the editor
         this.quill.root.addEventListener('click', this.handleClick, false);
@@ -82,26 +78,29 @@ export default class ImageResize {
     };
 
     handleClick = (evt) => {
-		    if (evt.target && evt.target.tagName && (evt.target.tagName.toUpperCase() === 'IMG')) {
-            if (this.img === evt.target) {
-                // we are already focused on this image
+        const table = TableTrick.findTable(this.quill)
+		    // if (evt.target && evt.target.tagName && (evt.target.tagName.toUpperCase() === 'table')) {
+		    if (table) {
+            // if (this.table === evt.target) {
+            if (this.table === table.domNode) {
+                // we are already focused on this table
                 return;
             }
-            if (this.img) {
-                // we were just focused on another image
+            if (this.table) {
+                // we were just focused on another table
                 this.hide();
             }
-            // clicked on an image inside the editor
-            this.show(evt.target);
-        } else if (this.img) {
-            // clicked on a non image
+            // clicked on an table inside the editor
+            this.show(table.domNode);
+        } else if (this.table) {
+            // clicked on a non table
             this.hide();
         }
     };
 
-    show = (img) => {
-        // keep track of this img element
-        this.img = img;
+    show = (table) => {
+        // keep track of this table element
+        this.table = table;
 
         this.showOverlay();
 
@@ -113,14 +112,14 @@ export default class ImageResize {
             this.hideOverlay();
         }
 
-        this.quill.setSelection(null);
+        // this.quill.setSelection(null);
 
         // prevent spurious text selection
         this.setUserSelect('none');
 
-        // listen for the image being deleted or moved
-        document.addEventListener('keyup', this.checkImage, true);
-        this.quill.root.addEventListener('input', this.checkImage, true);
+        // listen for the table being deleted or moved
+        document.addEventListener('keyup', this.checkTable, true);
+        this.quill.root.addEventListener('input', this.checkTable, true);
 
         // Create and add the overlay
         this.overlay = document.createElement('div');
@@ -140,36 +139,36 @@ export default class ImageResize {
         this.quill.root.parentNode.removeChild(this.overlay);
         this.overlay = undefined;
 
-        // stop listening for image deletion or movement
-        document.removeEventListener('keyup', this.checkImage);
-        this.quill.root.removeEventListener('input', this.checkImage);
+        // stop listening for table deletion or movement
+        document.removeEventListener('keyup', this.checkTable);
+        this.quill.root.removeEventListener('input', this.checkTable);
 
         // reset user-select
         this.setUserSelect('');
     };
 
     repositionElements = () => {
-        if (!this.overlay || !this.img) {
+        if (!this.overlay || !this.table) {
             return;
         }
 
-        // position the overlay over the image
+        // position the overlay over the table
         const parent = this.quill.root.parentNode;
-        const imgRect = this.img.getBoundingClientRect();
+        const tableRect = this.table.getBoundingClientRect();
         const containerRect = parent.getBoundingClientRect();
 
         Object.assign(this.overlay.style, {
-            left: `${imgRect.left - containerRect.left - 1 + parent.scrollLeft}px`,
-            top: `${imgRect.top - containerRect.top + parent.scrollTop}px`,
-            width: `${imgRect.width}px`,
-            height: `${imgRect.height}px`,
+            left: `${tableRect.left - containerRect.left - 1 + parent.scrollLeft}px`,
+            top: `${tableRect.top - containerRect.top + parent.scrollTop}px`,
+            width: `${tableRect.width}px`,
+            height: `${tableRect.height}px`,
         });
     };
 
     hide = () => {
         this.hideOverlay();
         this.removeModules();
-        this.img = undefined;
+        this.table = undefined;
     };
 
     setUserSelect = (value) => {
@@ -185,10 +184,10 @@ export default class ImageResize {
         });
     };
 
-    checkImage = (evt) => {
-        if (this.img) {
+    checkTable = (evt) => {
+        if (this.table) {
             if (evt.keyCode == 46 || evt.keyCode == 8) {
-                window.Quill.find(this.img).deleteAt(0);
+                window.Quill.find(this.table).deleteAt(0);
             }
             this.hide();
         }
@@ -196,5 +195,6 @@ export default class ImageResize {
 }
 
 if (window.Quill) {
-    window.Quill.register('modules/imageResize', ImageResize);
+    window.Quill.register('modules/tableResize', TableResize);
+    window.Quill.register('attributors/style/style', TableStyle);
 }

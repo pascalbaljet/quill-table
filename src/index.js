@@ -37,6 +37,7 @@ class TableModule {
 
         let clipboard = quill.getModule('clipboard');
         clipboard.addMatcher('TABLE', function (node, delta) {
+            window.tableWidth = node.style.width; // TODO hack for pasting table
             return delta;
         });
         clipboard.addMatcher('TR', function (node, delta) {

@@ -60,7 +60,7 @@ export class Resize extends BaseModule {
         // note starting mousedown position
         this.dragStartX = evt.clientX;
         // store the width before the drag
-        this.preDragWidth = this.img.width || this.img.naturalWidth;
+        this.preDragWidth = this.table.style.width || this.table.offsetWidth;
         // set the proper cursor everywhere
         this.setCursor(this.dragBox.style.cursor);
         // listen for movement and mouseup
@@ -77,18 +77,18 @@ export class Resize extends BaseModule {
     };
 
     handleDrag = (evt) => {
-        if (!this.img) {
-            // image not set yet
+        if (!this.table) {
+            // table not set yet
             return;
         }
-        // update image size
+        // update table size
         const deltaX = evt.clientX - this.dragStartX;
         if (this.dragBox === this.boxes[0] || this.dragBox === this.boxes[3]) {
-            // left-side resize handler; dragging right shrinks image
-            this.img.width = Math.round(this.preDragWidth - deltaX);
+            // left-side resize handler; dragging right shrinks table
+            this.table.style.width = `${Math.round(parseInt(this.preDragWidth) - deltaX)}px`;
         } else {
-            // right-side resize handler; dragging right enlarges image
-            this.img.width = Math.round(this.preDragWidth + deltaX);
+            // right-side resize handler; dragging right enlarges table
+            this.table.style.width = `${Math.round(parseInt(this.preDragWidth) + deltaX)}px`;
         }
         this.requestUpdate();
     };
@@ -96,9 +96,11 @@ export class Resize extends BaseModule {
     setCursor = (value) => {
         [
             document.body,
-            this.img,
+            this.table,
         ].forEach((el) => {
-            el.style.cursor = value;   // eslint-disable-line no-param-reassign
+            if (el && el.style) {
+              el.style.cursor = value;   // eslint-disable-line no-param-reassign
+            }
         });
     };
 }

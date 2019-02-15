@@ -1,15 +1,17 @@
 export default {
     modules: [
-        'DisplaySize',
-        'Toolbar',
+        // 'DisplaySize',
+        // 'Toolbar',
         'Resize',
     ],
     overlayStyles: {
         position: 'absolute',
         boxSizing: 'border-box',
         border: '1px dashed #444',
+        pointerEvents: 'none',
     },
     handleStyles: {
+        pointerEvents: 'auto',
         position: 'absolute',
         height: '12px',
         width: '12px',
