@@ -98,6 +98,11 @@ export default class TableTrick {
           const { index, length } = quill.getSelection()
 
           if (td) {
+                const number = TableTrick.getCell(quill).domNode.getAttribute('column')
+          let td = TableTrick.getSelectedTd(quill);
+          const { index, length } = quill.getSelection()
+
+          if (td) {
                 const columnNumber = parseInt(TableTrick.getCell(quill).domNode.getAttribute('column'))
                 let table = td.parent.parent;
                 let table_id = table.domNode.getAttribute('table_id');
@@ -117,9 +122,6 @@ export default class TableTrick {
                   }
                 });
             }
-          TableTrick.updateColumnNumbers(quill)
-          quill.setSelection(index, length)
-
         } else if (value === 'append-row') {
             let td = TableTrick.getSelectedTd(quill);
             if (td) {
@@ -153,8 +155,6 @@ export default class TableTrick {
           const tableId = cell.domNode.getAttribute('table_id')
           const columnSelector = `td[table_id='${tableId}'][column='${columnNumber}']`
           const colCells = document.querySelectorAll(columnSelector)
-          console.log("_______ colCells", colCells)
-          // debugger
           colCells.forEach(td => {
             // This handles reducing colspan of a merged cell only if delete
             // was fired on a cell STARTING at the same column as the merged cell
