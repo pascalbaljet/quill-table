@@ -6,6 +6,7 @@ import Table from './js/TableBlot';
 import Contain from './js/ContainBlot';
 import './css/quill.table.css';
 import TableTrick from "./js/TableTrick";
+import TableResizeModule from "./js/TableResize/TableResize";
 import tableToolbar from "./js/tableToolbar";
 
 let Container = Quill.import('blots/container');
@@ -19,6 +20,8 @@ Quill.register(TableCell);
 Quill.register(TableRow);
 Quill.register(Table);
 Quill.register(Contain);
+Quill.register('modules/tableResize', TableResizeModule);
+
 
 class TableModule {
     constructor(quill, options) {
@@ -37,6 +40,8 @@ class TableModule {
 
         let clipboard = quill.getModule('clipboard');
         clipboard.addMatcher('TABLE', function (node, delta) {
+            window.tableWidth = node.style.width; // TODO hack for pasting table
+            window.tableClassList = node.classList; // TODO hack for pasting table
             return delta;
         });
         clipboard.addMatcher('TR', function (node, delta) {
@@ -44,7 +49,7 @@ class TableModule {
         });
         clipboard.addMatcher('TD', function (node, delta) {
             return delta.compose(new Delta().retain(delta.length(), {
-                td: node.getAttribute('table_id') + '|' + node.getAttribute('row_id') + '|' + node.getAttribute('cell_id') + '|' + node.getAttribute('column') + '|' + node.getAttribute('color')
+                td: node.getAttribute('table_id') + '|' + node.getAttribute('row_id') + '|' + node.getAttribute('cell_id') + '|' + node.getAttribute('column') + '|' + node.getAttribute('color') + '|' + node.getAttribute('colspan')
             }));
         });
     }
@@ -55,6 +60,7 @@ module.exports = {
     TableRow,
     TableCell,
     Contain,
+    TableResizeModule,
     TableModule,
     tableToolbar
 };

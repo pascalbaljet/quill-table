@@ -8,10 +8,25 @@ let Parchment = Quill.import('parchment');
 
 class Table extends ContainBlot {
     static create(value) {
+
         let tagName = 'table';
         let node = super.create(tagName);
         node.setAttribute('table_id', value);
         node.setAttribute('id', value);
+        const table = document.getElementById(value)
+
+        if (table) {
+            // TODO hack for setting parameters for a table from given html
+            if (window.tableWidth) {
+                table.style.width = window.tableWidth
+                window.tableWidth = null
+            }
+
+            if (window.tableClassList) {
+                table.classList = window.tableClassList
+                window.tableClassList = null
+            }
+        }
 
         return node;
     }

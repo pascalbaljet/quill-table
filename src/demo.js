@@ -38,6 +38,7 @@ const Editor = new Quill(document.getElementById('quillContainer'), {
               }
             },
             table: true,
+            tableResize: true
         },
         placeholder: '',
         theme: 'snow',
