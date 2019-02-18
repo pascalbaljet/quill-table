@@ -2,7 +2,6 @@ import tableToolbar from "./js/tableToolbar";
 
 window.Quill = require('quill');
 const quillTable = require('./index.js');
-const tableResize = require('./js/TableResize/TableResize.js');
 
 Quill.register(quillTable.TableCell);
 Quill.register(quillTable.TableRow);
@@ -39,7 +38,7 @@ const Editor = new Quill(document.getElementById('quillContainer'), {
               }
             },
             table: true,
-            tableResize: {}
+            tableResize: true
         },
         placeholder: '',
         theme: 'snow',

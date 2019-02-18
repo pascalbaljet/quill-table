@@ -221,6 +221,7 @@ export default class TableTrick {
             }
           }
           currentElement.domNode.style.backgroundColor = value
+          currentElement.domNode.setAttribute('color', value)
         } else {
             let table_id = TableTrick.random_id();
             let table = Parchment.create('table', table_id);

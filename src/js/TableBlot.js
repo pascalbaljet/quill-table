@@ -14,11 +14,18 @@ class Table extends ContainBlot {
         node.setAttribute('table_id', value);
         node.setAttribute('id', value);
         const table = document.getElementById(value)
-        const tableWidthToSet = window.tableWidth
 
-        if (table && tableWidthToSet) {
-          table.style.width = window.tableWidth
-          window.tableWidth = null
+        if (table) {
+            // TODO hack for setting parameters for a table from given html
+            if (window.tableWidth) {
+                table.style.width = window.tableWidth
+                window.tableWidth = null
+            }
+
+            if (window.tableClassList) {
+                table.classList = window.tableClassList
+                window.tableClassList = null
+            }
         }
 
         return node;
