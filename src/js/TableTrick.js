@@ -95,60 +95,58 @@ export default class TableTrick {
             return node;
         } else if (value === 'append-col') {
           let td = TableTrick.getSelectedTd(quill);
-          const { index, length } = quill.getSelection()
-
           if (td) {
-                const number = TableTrick.getCell(quill).domNode.getAttribute('column')
-          let td = TableTrick.getSelectedTd(quill);
-          const { index, length } = quill.getSelection()
-
-          if (td) {
-                const columnNumber = parseInt(TableTrick.getCell(quill).domNode.getAttribute('column'))
-                let table = td.parent.parent;
-                let table_id = table.domNode.getAttribute('table_id');
-                table.children.forEach(function (tr) {
-                  let row_id = tr.domNode.getAttribute('row_id');
-                  let cell_id = TableTrick.random_id();
-                  let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id +  '|' + columnNumber + '|white|1');
-                  const nextColumnBlot = tr.children.map(c=> {
-                    if (parseInt(c.domNode.getAttribute('column')) === (columnNumber+1)) {
-                      return c
-                    }
-                  }).filter(c=>!!c)[0]
-                  if (nextColumnBlot) {
-                    tr.insertBefore(td, nextColumnBlot);
-                  } else {
-                    tr.appendChild(td);
-                  }
-                });
-            }
-        } else if (value === 'append-row') {
-            let td = TableTrick.getSelectedTd(quill);
-            if (td) {
-                const currentRow = td.parent
-                const table = td.parent.parent;
-                const newRow = Parchment.create('tr');
-                const nextRow = td.parent.next
-                const table_id = table.domNode.getAttribute('table_id');
-                const row_id = TableTrick.random_id();
-                newRow.domNode.setAttribute('row_id', row_id);
-                currentRow.children.forEach((cell, i)=>{
-                    let cell_id = TableTrick.random_id();
-                    const colspan = cell.domNode.getAttribute('colspan')
-                    let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + i  + '|white|' + colspan);
-                    newRow.appendChild(td);
-                    let p = Parchment.create('block');
-                    td.appendChild(p);
-                    let br = Parchment.create('break');
-                    p.appendChild(br);
-                })
-                if (nextRow) {
-                  table.insertBefore(newRow, nextRow)
-                } else {
-                  table.appendChild(newRow);
+            const { index, length } = quill.getSelection()
+            const columnNumber = parseInt(TableTrick.getCell(quill).domNode.getAttribute('column'))
+            let table = td.parent.parent;
+            let table_id = table.domNode.getAttribute('table_id');
+            table.children.forEach(function (tr) {
+              let row_id = tr.domNode.getAttribute('row_id');
+              let cell_id = TableTrick.random_id();
+              let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id +  '|' + columnNumber + '|white|1');
+              const nextColumnBlot = tr.children.map(c=> {
+                if (parseInt(c.domNode.getAttribute('column')) === (columnNumber+1)) {
+                  return c
                 }
-              TableTrick.updateColumnNumbers(quill)
+              }).filter(c=>!!c)[0]
+              if (nextColumnBlot) {
+                tr.insertBefore(td, nextColumnBlot);
+              } else {
+                tr.appendChild(td);
+              }
+            });
+            quill.setSelection(index, length)
+          }
+        } else if (value === 'append-row') {
+          let td = TableTrick.getSelectedTd(quill);
+          if (td) {
+            const { index, length } = quill.getSelection()
+            const currentRow = td.parent
+            const table = td.parent.parent;
+            const newRow = Parchment.create('tr');
+            const nextRow = td.parent.next
+            const table_id = table.domNode.getAttribute('table_id');
+            const row_id = TableTrick.random_id();
+            const tdNodesInRow = Array.from(currentRow.domNode.children)
+            newRow.domNode.setAttribute('row_id', row_id);
+            tdNodesInRow.forEach((cell, i)=>{
+                let cell_id = TableTrick.random_id();
+                const colspan = cell.getAttribute('colspan')
+                let td = Parchment.create('td', table_id + '|' + row_id + '|' + cell_id + '|' + i  + '|white|' + colspan);
+                newRow.appendChild(td);
+                let p = Parchment.create('block');
+                td.appendChild(p);
+                let br = Parchment.create('break');
+                p.appendChild(br);
+            })
+            if (nextRow) {
+              table.insertBefore(newRow, nextRow)
+            } else {
+              table.appendChild(newRow);
             }
+            TableTrick.updateColumnNumbers(quill)
+            quill.setSelection(index, length)
+          }
         } else if (value === 'delete-col') {
           const cell = this.getCell(quill)
           const columnNumber = cell.domNode.getAttribute('column')
