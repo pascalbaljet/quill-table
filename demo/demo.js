@@ -11868,11 +11868,12 @@ var TableTrick = function () {
         return node;
       } else if (value === 'append-col') {
         var _td = TableTrick.getSelectedTd(quill);
-        if (_td) {
-          var _quill$getSelection = quill.getSelection(),
-              index = _quill$getSelection.index,
-              length = _quill$getSelection.length;
 
+        var _quill$getSelection = quill.getSelection(),
+            index = _quill$getSelection.index,
+            length = _quill$getSelection.length;
+
+        if (_td) {
           var columnNumber = parseInt(TableTrick.getCell(quill).domNode.getAttribute('column'));
           var _table = _td.parent.parent;
           var _table_id = _table.domNode.getAttribute('table_id');
@@ -11893,6 +11894,7 @@ var TableTrick = function () {
               tr.appendChild(td);
             }
           });
+          TableTrick.updateColumnNumbers(quill);
           quill.setSelection(index, length);
         }
       } else if (value === 'append-row') {
@@ -11976,12 +11978,21 @@ var TableTrick = function () {
           }
         }
         var cellsToRemove = (0, _values2.default)(cellsToRemoveMap);
+
         var totalColspan = [firstElement].concat((0, _toConsumableArray3.default)(cellsToRemove)).map(function (td) {
           return document.body.contains(td.domNode) ? parseInt(td.domNode.getAttribute('colspan')) : 0;
         }).reduce(function (a, b) {
           return a + b;
         });
+
+        var htmlToMerge = [firstElement].concat((0, _toConsumableArray3.default)(cellsToRemove)).map(function (td) {
+          return document.body.contains(td.domNode) ? td.domNode.innerHTML : '';
+        }).reduce(function (a, b) {
+          return a + b;
+        });
+
         firstElement.domNode.setAttribute('colspan', '' + totalColspan);
+        firstElement.domNode.innerHTML = htmlToMerge;
         cellsToRemove.forEach(function (cell) {
           return cell.remove();
         });

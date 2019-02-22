@@ -96,9 +96,7 @@ export default class TableTrick {
         } else if (value === 'append-col') {
           let td = TableTrick.getSelectedTd(quill);
           const { index, length } = quill.getSelection()
-
           if (td) {
-            const { index, length } = quill.getSelection()
             const columnNumber = parseInt(TableTrick.getCell(quill).domNode.getAttribute('column'))
             let table = td.parent.parent;
             let table_id = table.domNode.getAttribute('table_id');
@@ -117,6 +115,7 @@ export default class TableTrick {
                 tr.appendChild(td);
               }
             });
+            TableTrick.updateColumnNumbers(quill)
             quill.setSelection(index, length)
           }
         } else if (value === 'append-row') {
@@ -194,10 +193,17 @@ export default class TableTrick {
             }
           }
           const cellsToRemove = Object.values(cellsToRemoveMap)
+
           const totalColspan = [firstElement, ...cellsToRemove].map(td=>{
             return document.body.contains(td.domNode) ? parseInt((td.domNode.getAttribute('colspan'))) : 0
           }).reduce((a,b)=>a+b)
+
+          const htmlToMerge = [firstElement, ...cellsToRemove].map(td=>{
+            return document.body.contains(td.domNode) ? td.domNode.innerHTML : ''
+          }).reduce((a,b)=>a+b)
+
           firstElement.domNode.setAttribute('colspan', `${totalColspan}`)
+          firstElement.domNode.innerHTML = htmlToMerge
           cellsToRemove.forEach(cell => cell.remove())
           TableTrick.updateColumnNumbers(quill)
           quill.setSelection(index, length)
