@@ -1,10 +1,11 @@
 import defaultsDeep from 'lodash/defaultsDeep';
 import DefaultOptions from './DefaultOptions';
 import { Resize } from './modules/Resize';
+import { Toolbar } from './modules/Toolbar';
 import TableTrick from "../TableTrick";
 import {TableStyle} from "./TableAttributors";
 
-const knownModules = { Resize };
+const knownModules = { Resize, Toolbar };
 
 /**
  * Custom module for quilljs to allow user to resize <table> elements
