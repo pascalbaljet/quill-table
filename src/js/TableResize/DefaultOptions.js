@@ -1,7 +1,7 @@
 export default {
     modules: [
         // 'DisplaySize',
-        // 'Toolbar',
+        'Toolbar',
         'Resize',
     ],
     overlayStyles: {
@@ -33,8 +33,9 @@ export default {
         cursor: 'default',
     },
     toolbarStyles: {
+        pointerEvents: 'auto',
         position: 'absolute',
-        top: '-12px',
+        top: '-30px',
         right: '0',
         left: '0',
         height: '0',
@@ -43,7 +44,7 @@ export default {
         textAlign: 'center',
         color: '#333',
         boxSizing: 'border-box',
-        cursor: 'default',
+        cursor: 'pointer',
     },
     toolbarButtonStyles: {
         display: 'inline-block',
@@ -52,6 +53,7 @@ export default {
         background: 'white',
         border: '1px solid #999',
         verticalAlign: 'middle',
+        cursor: 'pointer',
     },
     toolbarButtonSvgStyles: {
         fill: '#444',
